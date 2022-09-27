@@ -4,11 +4,6 @@ class MorpheusRelease < Formula
   license "BSD-3-Clause"
   head "https://gitlab.com/morpheus.lab/morpheus.git", branch: "release_2.3"
 
-  livecheck do
-    url :stable
-    regex(/^v?(\d+(?:\.\d+)+(?:-[a-z]+\d*)?)$/i)
-  end
-
   depends_on "boost" => :build
   depends_on "cmake" => :build
   depends_on "doxygen" => :build

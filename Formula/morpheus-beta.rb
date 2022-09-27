@@ -1,13 +1,15 @@
 class MorpheusBeta < Formula
   desc "Modelling environment for multi-cellular systems biology"
   homepage "https://morpheus.gitlab.io/"
-  url "https://gitlab.com/morpheus.lab/morpheus/-/archive/v2.2.6/morpheus-v2.2.6.tar.gz"
-  sha256 "ed39e034eb47972af730b1538a005d7703cf5817f39452fae3c9fdc0bf9efd23"
+  url "https://gitlab.com/morpheus.lab/morpheus/-/archive/v2.3.0_1/morpheus-v2.3.0_1.tar.gz"
+  version "2.3.0"
+  sha256 "af978a1918af10d47c5af60924ad5d3d5bad24d14406eb6f7baf05a758b3eb60"
   license "BSD-3-Clause"
+  revision 1
 
   livecheck do
     url :stable
-    regex(/^v?(\d+(?:\.\d+)+(?:-[a-z]+\d*)?)$/i)
+    regex(/^v?(\d+(?:\.\d+)+(?:-[a-z]+\d*)?(?:_?\d+)?)$/i)
   end
 
   bottle do
