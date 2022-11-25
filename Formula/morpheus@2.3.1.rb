@@ -1,8 +1,14 @@
-class MorpheusPymapper < Formula
+class MorpheusAT231 < Formula
   desc "Modelling environment for multi-cellular systems biology"
   homepage "https://morpheus.gitlab.io/"
+  url "https://gitlab.com/morpheus.lab/morpheus/-/archive/v2.3.1/morpheus-v2.3.1.tar.gz"
+  sha256 "33c12825f0e0a9b52478713cd42936aaa3e92c50d21db50d6bc61099dd89c95f"
   license "BSD-3-Clause"
-  head "https://gitlab.com/jdieg0/morpheus.git", branch: "pybind11"
+
+  livecheck do
+    url :stable
+    regex(/^v?(\d+(?:\.\d+)+(?:_?\d+)?)$/i)
+  end
 
   depends_on "boost" => :build
   depends_on "cmake" => :build
@@ -61,8 +67,6 @@ class MorpheusPymapper < Formula
         Or add Morpheus to your Applications folder with:
 
           ln -sf #{prefix}/Morpheus.app /Applications
-
-        For more information about this branch visit: https://gitlab.com/morpheus.lab/morpheus/-/tree/release_2.2
       EOS
     end
   end
