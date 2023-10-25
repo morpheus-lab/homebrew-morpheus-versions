@@ -1,8 +1,8 @@
 class MorpheusBeta < Formula
   desc "Modelling environment for multi-cellular systems biology"
   homepage "https://morpheus.gitlab.io/"
-  url "https://gitlab.com/morpheus.lab/morpheus/-/archive/v2.3.3/morpheus-v2.3.3.tar.gz"
-  sha256 "3ec01bd841a39fda3e9a3d04e672a65847ebe9ded212715d50604faafac05302"
+  url "https://gitlab.com/morpheus.lab/morpheus/-/archive/v2.3.5/morpheus-v2.3.5.tar.gz"
+  sha256 "4270fb0d01939aa208025530f078931d806c57f608fa2798009d3adb0d6207f5"
   license "BSD-3-Clause"
 
   livecheck do
@@ -13,12 +13,12 @@ class MorpheusBeta < Formula
   depends_on "boost" => :build
   depends_on "cmake" => :build
   depends_on "doxygen" => :build
-  depends_on "ffmpeg" # Runtime dependencies
   depends_on "gnuplot"
   depends_on "graphviz"
   depends_on "libomp"
   depends_on "libtiff"
   depends_on "qt@5"
+  depends_on "ffmpeg" => :recommended # Runtime dependencies
 
   uses_from_macos "bzip2"
   uses_from_macos "libxml2"
@@ -67,6 +67,8 @@ class MorpheusBeta < Formula
         Or add Morpheus to your Applications folder with:
 
           ln -sf #{prefix}/Morpheus.app /Applications
+
+        For more information about this version visit: https://morpheus.gitlab.io/faq/installation/macos/#install-other-morpheus-versions
       EOS
     end
   end
