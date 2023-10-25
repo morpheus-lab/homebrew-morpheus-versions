@@ -7,12 +7,12 @@ class MorpheusRelease < Formula
   depends_on "boost" => :build
   depends_on "cmake" => :build
   depends_on "doxygen" => :build
-  depends_on "ffmpeg" # Runtime dependencies
   depends_on "gnuplot"
   depends_on "graphviz"
   depends_on "libomp"
   depends_on "libtiff"
   depends_on "qt@5"
+  depends_on "ffmpeg" => :recommended # Runtime dependencies
 
   uses_from_macos "bzip2"
   uses_from_macos "libxml2"
@@ -62,7 +62,7 @@ class MorpheusRelease < Formula
 
           ln -sf #{prefix}/Morpheus.app /Applications
 
-        For more information about this branch visit: https://gitlab.com/morpheus.lab/morpheus/-/tree/develop
+        For more information about this branch visit: https://gitlab.com/morpheus.lab/morpheus/-/tree/release_2.3
       EOS
     end
   end
