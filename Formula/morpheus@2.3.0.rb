@@ -69,6 +69,8 @@ class MorpheusAT230 < Formula
         Or add Morpheus to your Applications folder with:
 
           ln -sf #{prefix}/Morpheus.app /Applications
+
+        For more information about this release, visit: https://morpheus.gitlab.io/download/2.3.0/
       EOS
     end
   end

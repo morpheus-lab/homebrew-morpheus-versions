@@ -68,7 +68,7 @@ class MorpheusBeta < Formula
 
           ln -sf #{prefix}/Morpheus.app /Applications
 
-        For more information about this version visit: https://morpheus.gitlab.io/faq/installation/macos/#install-other-morpheus-versions
+        For more information about this version, visit: https://morpheus.gitlab.io/faq/installation/macos/#install-other-morpheus-versions
       EOS
     end
   end

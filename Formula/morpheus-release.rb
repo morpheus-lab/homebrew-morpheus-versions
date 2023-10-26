@@ -62,7 +62,7 @@ class MorpheusRelease < Formula
 
           ln -sf #{prefix}/Morpheus.app /Applications
 
-        For more information about this branch visit: https://gitlab.com/morpheus.lab/morpheus/-/tree/release_2.3
+        For more information about this branch, visit: https://gitlab.com/morpheus.lab/morpheus/-/tree/release_2.3
       EOS
     end
   end

@@ -68,7 +68,7 @@ class MorpheusAT234 < Formula
 
           ln -sf #{prefix}/Morpheus.app /Applications
 
-        For more information about this version visit: https://morpheus.gitlab.io/download/2.3.4/
+        For more information about this release, visit: https://morpheus.gitlab.io/download/2.3.4/
       EOS
     end
   end
