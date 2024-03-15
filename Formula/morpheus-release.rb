@@ -27,7 +27,9 @@ class MorpheusRelease < Formula
 
     if OS.mac?
       args << "-DMORPHEUS_RELEASE_BUNDLE=ON"
-      args << "-DMORPHEUS_SBML=OFF" # SBML import currently disabled due to libSBML build errors with some macOS SDKs
+
+      # SBML import currently disabled by default due to libSBML build errors with some macOS SDKs
+      args << "-DMORPHEUS_SBML=OFF" unless build.with? "sbml"
     end
 
     system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
