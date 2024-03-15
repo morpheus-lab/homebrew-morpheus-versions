@@ -4,6 +4,8 @@ class MorpheusRelease < Formula
   license "BSD-3-Clause"
   head "https://gitlab.com/morpheus.lab/morpheus.git", branch: "release_2.3"
 
+  option "with-sbml", "Enable SBML import via the internal libSBML build"
+
   depends_on "boost" => :build
   depends_on "cmake" => :build
   depends_on "doxygen" => :build
@@ -20,12 +22,17 @@ class MorpheusRelease < Formula
   uses_from_macos "zlib"
 
   def install
-    args = std_cmake_args
+    args = []
     args << "-G Ninja"
-    args << "-DMORPHEUS_RELEASE_BUNDLE=ON" if OS.mac?
 
-    system "cmake", *args, "."
-    system "ninja", "install"
+    if OS.mac?
+      args << "-DMORPHEUS_RELEASE_BUNDLE=ON"
+      args << "-DMORPHEUS_SBML=OFF" # SBML import currently disabled due to libSBML build errors with some macOS SDKs
+    end
+
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
 
     if OS.mac?
       bin.write_exec_script "#{prefix}/Morpheus.app/Contents/MacOS/morpheus"
@@ -62,7 +69,7 @@ class MorpheusRelease < Formula
 
         Or add Morpheus to your Applications folder with:
 
-          ln -sf #{prefix}/Morpheus.app /Applications
+          ln -sf #{opt_prefix}/Morpheus.app /Applications
 
         For more information about this branch, visit: https://gitlab.com/morpheus.lab/morpheus/-/tree/release_2.3
       EOS
