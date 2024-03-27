@@ -43,8 +43,10 @@ class MorpheusRelease < Formula
   end
 
   def post_install
-    # Set PATH environment variable including Homebrew prefix in macOS app bundle
-    inreplace "#{prefix}/Morpheus.app/Contents/Info.plist", "HOMEBREW_BIN_PATH", ENV["PATH"] if OS.mac?
+    if OS.mac? && File.read("#{prefix}/Morpheus.app/Contents/Info.plist").include?("HOMEBREW_BIN_PATH")
+      # Set PATH environment variable including Homebrew prefix in macOS app bundle
+      inreplace "#{prefix}/Morpheus.app/Contents/Info.plist", "HOMEBREW_BIN_PATH", ENV["PATH"]
+    end
   end
 
   def caveats
