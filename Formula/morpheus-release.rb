@@ -38,28 +38,13 @@ class MorpheusRelease < Formula
 
     if OS.mac?
       bin.write_exec_script "#{prefix}/Morpheus.app/Contents/MacOS/morpheus"
-
-      (bin/"morpheus-gui").write <<~EOS
-        #!/bin/bash
-        open #{prefix}/Morpheus.app
-      EOS
-      (bin/"morpheus-gui").chmod 0555
+      bin.write_exec_script "#{prefix}/Morpheus.app/Contents/MacOS/morpheus-gui"
     end
   end
 
   def post_install
-    if OS.mac?
-      # Set PATH environment variable including Homebrew prefix in macOS app bundle
-      inreplace "#{prefix}/Morpheus.app/Contents/Info.plist", "<key>CFBundleExecutable</key>",
-        <<~EOS.chomp
-          <key>LSEnvironment</key>
-          <dict>
-              <key>PATH</key>
-              <string>#{ENV["PATH"]}</string>
-          </dict>
-          <key>CFBundleExecutable</key>
-        EOS
-    end
+    # Set PATH environment variable including Homebrew prefix in macOS app bundle
+    inreplace "#{prefix}/Morpheus.app/Contents/Info.plist", "HOMEBREW_BIN_PATH", ENV["PATH"] if OS.mac?
   end
 
   def caveats
