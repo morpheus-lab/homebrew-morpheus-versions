@@ -1,18 +1,21 @@
-class MorpheusBeta < Formula
+class Morpheus < Formula
   desc "Modelling environment for multi-cellular systems biology"
   homepage "https://morpheus.gitlab.io/"
-  url "https://gitlab.com/morpheus.lab/morpheus/-/archive/v2.3.5/morpheus-v2.3.5.tar.gz"
-  sha256 "4270fb0d01939aa208025530f078931d806c57f608fa2798009d3adb0d6207f5"
+  url "https://gitlab.com/morpheus.lab/morpheus/-/archive/v2.3.7/morpheus-v2.3.7.tar.gz"
+  sha256 "ad5694a098e4752db53659ee983c3ae417a43747320e73c3005f6cf88b52d55c"
   license "BSD-3-Clause"
 
   livecheck do
     url :stable
-    regex(/^v?(\d+(?:\.\d+)+(?:-[a-z]+\d*)?(?:_?\d+)?)$/i)
+    regex(/^v?(\d+(?:\.\d+)+(?:_?\d+)?)$/i)
   end
+
+  option "with-sbml", "Enable SBML import via the internal libSBML build"
 
   depends_on "boost" => :build
   depends_on "cmake" => :build
   depends_on "doxygen" => :build
+  depends_on "ninja" => :build
   depends_on "gnuplot"
   depends_on "graphviz"
   depends_on "libomp"
@@ -25,40 +28,35 @@ class MorpheusBeta < Formula
   uses_from_macos "zlib"
 
   def install
-    args = std_cmake_args
-    args << "-DMORPHEUS_RELEASE_BUNDLE=ON" if OS.mac?
+    args = []
+    args << "-G Ninja"
 
-    system "cmake", ".", *args
-    system "make", "install"
+    if OS.mac?
+      args << "-DMORPHEUS_RELEASE_BUNDLE=ON"
+
+      # SBML import currently disabled by default due to libSBML build errors with some macOS SDKs
+      args << "-DMORPHEUS_SBML=OFF" if build.without? "sbml"
+    end
+
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
 
     if OS.mac?
       bin.write_exec_script "#{prefix}/Morpheus.app/Contents/MacOS/morpheus"
-
-      (bin/"morpheus-gui").write <<~EOS
-        #!/bin/bash
-        open #{prefix}/Morpheus.app
-      EOS
-      (bin/"morpheus-gui").chmod 0555
+      bin.write_exec_script "#{prefix}/Morpheus.app/Contents/MacOS/morpheus-gui"
     end
   end
 
   def post_install
-    if OS.mac?
+    if OS.mac? && File.read("#{prefix}/Morpheus.app/Contents/Info.plist").include?("HOMEBREW_BIN_PATH")
       # Set PATH environment variable including Homebrew prefix in macOS app bundle
-      inreplace "#{prefix}/Morpheus.app/Contents/Info.plist", "<key>CFBundleExecutable</key>",
-        <<~EOS.chomp
-          <key>LSEnvironment</key>
-          <dict>
-              <key>PATH</key>
-              <string>#{ENV["PATH"]}</string>
-          </dict>
-          <key>CFBundleExecutable</key>
-        EOS
+      inreplace "#{prefix}/Morpheus.app/Contents/Info.plist", "HOMEBREW_BIN_PATH", "#{HOMEBREW_PREFIX}/bin"
     end
   end
 
   def caveats
-    if OS.mac?
+    on_macos do
       <<~EOS
         To start the Morpheus GUI, type the following command:
 
@@ -66,9 +64,7 @@ class MorpheusBeta < Formula
 
         Or add Morpheus to your Applications folder with:
 
-          ln -sf #{prefix}/Morpheus.app /Applications
-
-        For more information about this version, visit: https://morpheus.gitlab.io/faq/installation/macos/#install-other-morpheus-versions
+          ln -sf #{opt_prefix}/Morpheus.app /Applications
       EOS
     end
   end
