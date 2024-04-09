@@ -50,7 +50,7 @@ class MorpheusRelease < Formula
   end
 
   def caveats
-    if OS.mac?
+    on_macos do
       <<~EOS
         To start the Morpheus GUI, type the following command:
 
