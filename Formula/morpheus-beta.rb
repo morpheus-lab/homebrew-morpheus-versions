@@ -1,4 +1,4 @@
-class Morpheus < Formula
+class MorpheusBeta < Formula
   desc "Modelling environment for multi-cellular systems biology"
   homepage "https://morpheus.gitlab.io/"
   url "https://gitlab.com/morpheus.lab/morpheus/-/archive/v2.3.7/morpheus-v2.3.7.tar.gz"
@@ -65,6 +65,8 @@ class Morpheus < Formula
         Or add Morpheus to your Applications folder with:
 
           ln -sf #{opt_prefix}/Morpheus.app /Applications
+
+        For more information about this release, visit: https://morpheus.gitlab.io/download/latest/
       EOS
     end
   end
