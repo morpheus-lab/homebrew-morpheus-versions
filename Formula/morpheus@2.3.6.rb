@@ -10,11 +10,6 @@ class MorpheusAT236 < Formula
     regex(/^v?(\d+(?:\.\d+)+(?:_?\d+)?)$/i)
   end
 
-  bottle do
-    root_url "https://github.com/morpheus-lab/homebrew-morpheus/releases/download/morpheus-2.3.6"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "0c2797f3a0745296b99d66d2d901ae6e2982cefd76464aecd0306ea84ca6fee4"
-  end
-
   option "with-sbml", "Enable SBML import via the internal libSBML build"
 
   depends_on "boost" => :build
