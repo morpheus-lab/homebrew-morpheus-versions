@@ -1,5 +1,5 @@
 class MorpheusRelease < Formula
-  desc "Modelling environment for multi-cellular systems biology"
+  desc "Modeling environment for multi-cellular systems biology"
   homepage "https://morpheus.gitlab.io/"
   license "BSD-3-Clause"
   head "https://gitlab.com/morpheus.lab/morpheus.git", branch: "release_2.3"
@@ -22,11 +22,12 @@ class MorpheusRelease < Formula
   uses_from_macos "zlib"
 
   def install
-    args = []
-    args << "-G Ninja"
+    # has to build with Ninja until: https://gitlab.kitware.com/cmake/cmake/-/issues/25142
+    args = ["-G Ninja"]
 
     if OS.mac?
       args << "-DMORPHEUS_RELEASE_BUNDLE=ON"
+      args << "-DBREW_FORMULA_DEPLOYMENT=ON"
 
       # SBML import currently disabled by default due to libSBML build errors with some macOS SDKs
       args << "-DMORPHEUS_SBML=OFF" if build.without? "sbml"
@@ -36,17 +37,13 @@ class MorpheusRelease < Formula
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
 
-    if OS.mac?
-      bin.write_exec_script "#{prefix}/Morpheus.app/Contents/MacOS/morpheus"
-      bin.write_exec_script "#{prefix}/Morpheus.app/Contents/MacOS/morpheus-gui"
-    end
-  end
+    return unless OS.mac?
 
-  def post_install
-    if OS.mac? && File.read("#{prefix}/Morpheus.app/Contents/Info.plist").include?("HOMEBREW_BIN_PATH")
-      # Set PATH environment variable including Homebrew prefix in macOS app bundle
-      inreplace "#{prefix}/Morpheus.app/Contents/Info.plist", "HOMEBREW_BIN_PATH", ENV["PATH"]
-    end
+    bin.write_exec_script "#{prefix}/Morpheus.app/Contents/MacOS/morpheus"
+    bin.write_exec_script "#{prefix}/Morpheus.app/Contents/MacOS/morpheus-gui"
+
+    # Set PATH environment variable including Homebrew prefix in macOS app bundle
+    inreplace "#{prefix}/Morpheus.app/Contents/Info.plist", "HOMEBREW_BIN_PATH", "#{HOMEBREW_PREFIX}/bin"
   end
 
   def caveats
