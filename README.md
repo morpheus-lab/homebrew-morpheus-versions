@@ -6,7 +6,7 @@
 [![GitLab forks](https://img.shields.io/gitlab/forks/morpheus.lab/morpheus?style=social)](https://gitlab.com/morpheus.lab/morpheus)
 [![GitLab stars](https://img.shields.io/gitlab/stars/morpheus.lab/morpheus?style=social)](https://gitlab.com/morpheus.lab/morpheus)
 
-Here you'll find **alternate versions** of Morpheus.
+Here you'll find **outdated, development and test versions** of Morpheus.
 
 > [!WARNING]  
-> These Morpheus versions are **not recommended for regular use** and may contain bugs or instabilities. For **stable Morpheus versions** and installation instructions, see [`homebrew-morpheus`](https://github.com/morpheus-lab/homebrew-morpheus).
+> These Morpheus versions are **not recommended for regular use** and may contain bugs or instabilities. For the **official stable release**, see the [Morpheus download page](https://morpheus.gitlab.io/download/latest/). For **other special, but stable versions**, see [`homebrew-morpheus`](https://github.com/morpheus-lab/homebrew-morpheus).
