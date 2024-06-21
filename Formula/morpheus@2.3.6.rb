@@ -1,5 +1,5 @@
 class MorpheusAT236 < Formula
-  desc "Modelling environment for multi-cellular systems biology"
+  desc "Modeling environment for multi-cellular systems biology"
   homepage "https://morpheus.gitlab.io/"
   url "https://gitlab.com/morpheus.lab/morpheus/-/archive/v2.3.6/morpheus-v2.3.6.tar.gz"
   sha256 "abb277f3898467b51994e39ed0f4b38fc9aec79b98b126c6d17d971716612d82"
@@ -33,6 +33,7 @@ class MorpheusAT236 < Formula
 
     if OS.mac?
       args << "-DMORPHEUS_RELEASE_BUNDLE=ON"
+      args << "-DMORPHEUS_BINARY_SUFFIX=#{version}" # Append version to binary name
 
       # SBML import currently disabled by default due to libSBML build errors with some macOS SDKs
       args << "-DMORPHEUS_SBML=OFF" if build.without? "sbml"
@@ -77,9 +78,9 @@ class MorpheusAT236 < Formula
 
         Or add Morpheus to your Applications folder with:
 
-          ln -sf #{opt_prefix}/Morpheus.app /Applications
+          ln -sf #{opt_prefix}/Morpheus.app /Applications/Morpheus@#{version}.app
 
-        For more information about this release, visit: https://morpheus.gitlab.io/download/latest/
+        For more information about this release, visit: https://gitlab.com/morpheus.lab/morpheus/-/releases/v#{version}
       EOS
     end
   end

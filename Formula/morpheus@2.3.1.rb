@@ -1,5 +1,5 @@
 class MorpheusAT231 < Formula
-  desc "Modelling environment for multi-cellular systems biology"
+  desc "Modeling environment for multi-cellular systems biology"
   homepage "https://morpheus.gitlab.io/"
   url "https://gitlab.com/morpheus.lab/morpheus/-/archive/v2.3.1/morpheus-v2.3.1.tar.gz"
   sha256 "33c12825f0e0a9b52478713cd42936aaa3e92c50d21db50d6bc61099dd89c95f"
@@ -10,26 +10,38 @@ class MorpheusAT231 < Formula
     regex(/^v?(\d+(?:\.\d+)+(?:_?\d+)?)$/i)
   end
 
+  option "with-sbml", "Enable SBML import via the internal libSBML build"
+
   depends_on "boost" => :build
   depends_on "cmake" => :build
   depends_on "doxygen" => :build
-  depends_on "ffmpeg" # Runtime dependencies
+  depends_on "ninja" => :build
   depends_on "gnuplot"
   depends_on "graphviz"
   depends_on "libomp"
   depends_on "libtiff"
   depends_on "qt@5"
+  depends_on "ffmpeg" => :recommended # Runtime dependencies
 
   uses_from_macos "bzip2"
   uses_from_macos "libxml2"
   uses_from_macos "zlib"
 
   def install
-    args = std_cmake_args
-    args << "-DMORPHEUS_RELEASE_BUNDLE=ON" if OS.mac?
+    args = []
+    args << "-G Ninja"
 
-    system "cmake", ".", *args
-    system "make", "install"
+    if OS.mac?
+      args << "-DMORPHEUS_RELEASE_BUNDLE=ON"
+      args << "-DMORPHEUS_BINARY_SUFFIX=#{version}" # Append version to binary name
+
+      # SBML import currently disabled by default due to libSBML build errors with some macOS SDKs
+      args << "-DMORPHEUS_SBML=OFF" if build.without? "sbml"
+    end
+
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
 
     if OS.mac?
       bin.write_exec_script "#{prefix}/Morpheus.app/Contents/MacOS/morpheus"
@@ -66,9 +78,9 @@ class MorpheusAT231 < Formula
 
         Or add Morpheus to your Applications folder with:
 
-          ln -sf #{prefix}/Morpheus.app /Applications
+          ln -sf #{prefix}/Morpheus.app /Applications/Morpheus@#{version}.app
 
-        For more information about this release, visit: https://morpheus.gitlab.io/download/2.3.1/
+        For more information about this release, visit: https://morpheus.gitlab.io/download/#{version}/
       EOS
     end
   end

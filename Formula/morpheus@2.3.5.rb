@@ -1,5 +1,5 @@
 class MorpheusAT235 < Formula
-  desc "Modelling environment for multi-cellular systems biology"
+  desc "Modeling environment for multi-cellular systems biology"
   homepage "https://morpheus.gitlab.io/"
   url "https://gitlab.com/morpheus.lab/morpheus/-/archive/v2.3.5/morpheus-v2.3.5.tar.gz"
   sha256 "4270fb0d01939aa208025530f078931d806c57f608fa2798009d3adb0d6207f5"
@@ -9,6 +9,8 @@ class MorpheusAT235 < Formula
     url :stable
     regex(/^v?(\d+(?:\.\d+)+(?:_?\d+)?)$/i)
   end
+
+  option "with-sbml", "Enable SBML import via the internal libSBML build"
 
   depends_on "boost" => :build
   depends_on "cmake" => :build
@@ -26,12 +28,20 @@ class MorpheusAT235 < Formula
   uses_from_macos "zlib"
 
   def install
-    args = std_cmake_args
+    args = []
     args << "-G Ninja"
-    args << "-DMORPHEUS_RELEASE_BUNDLE=ON" if OS.mac?
 
-    system "cmake", *args, "."
-    system "ninja", "install"
+    if OS.mac?
+      args << "-DMORPHEUS_RELEASE_BUNDLE=ON"
+      args << "-DMORPHEUS_BINARY_SUFFIX=#{version}" # Append version to binary name
+
+      # SBML import currently disabled by default due to libSBML build errors with some macOS SDKs
+      args << "-DMORPHEUS_SBML=OFF" if build.without? "sbml"
+    end
+
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
 
     if OS.mac?
       bin.write_exec_script "#{prefix}/Morpheus.app/Contents/MacOS/morpheus"
@@ -68,9 +78,9 @@ class MorpheusAT235 < Formula
 
         Or add Morpheus to your Applications folder with:
 
-          ln -sf #{prefix}/Morpheus.app /Applications
+          ln -sf #{prefix}/Morpheus.app /Applications/Morpheus@#{version}.app
 
-        For more information about this release, visit: https://morpheus.gitlab.io/download/latest/
+        For more information about this release, visit: https://morpheus.gitlab.io/download/#{version}/
       EOS
     end
   end
