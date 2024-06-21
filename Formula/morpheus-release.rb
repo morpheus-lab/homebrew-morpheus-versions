@@ -28,6 +28,7 @@ class MorpheusRelease < Formula
     if OS.mac?
       args << "-DMORPHEUS_RELEASE_BUNDLE=ON"
       args << "-DBREW_FORMULA_DEPLOYMENT=ON"
+      args << "-DMORPHEUS_BINARY_SUFFIX=#{self.class.head.specs[:branch]}-#{`git rev-parse HEAD`.strip[0, 7]}" # Append branch name and Git commit hash to binary name
 
       # SBML import currently disabled by default due to libSBML build errors with some macOS SDKs
       args << "-DMORPHEUS_SBML=OFF" if build.without? "sbml"
@@ -55,9 +56,9 @@ class MorpheusRelease < Formula
 
         Or add Morpheus to your Applications folder with:
 
-          ln -sf #{opt_prefix}/Morpheus.app /Applications
+          ln -sf #{opt_prefix}/Morpheus.app /Applications/Morpheus-#{self.class.head.specs[:branch]}.app
 
-        For more information about this branch, visit: https://gitlab.com/morpheus.lab/morpheus/-/tree/release_2.3
+        For more information about this branch, visit: https://gitlab.com/morpheus.lab/morpheus/-/tree/#{self.class.head.specs[:branch]}
       EOS
     end
   end
