@@ -5,6 +5,7 @@ class MorpheusBeta < Formula
   version "3.0.0b1"
   sha256 "a533a2ee7a81193e103a8d609e9ed7ba6480135a7a1f5c8bf5424694fe6b0c7d"
   license "BSD-3-Clause"
+  revision 1
 
   livecheck do
     url :stable
@@ -97,8 +98,8 @@ class MorpheusBeta < Formula
 
     return unless OS.mac?
 
-    bin.write_exec_script "#{prefix}/Morpheus.app/Contents/MacOS/morpheus"
-    bin.write_exec_script "#{prefix}/Morpheus.app/Contents/MacOS/morpheus-gui"
+    bin.install_symlink prefix/"Morpheus.app/Contents/MacOS/morpheus-#{version}" => "morpheus"
+    bin.install_symlink prefix/"Morpheus.app/Contents/MacOS/morpheus-#{version}-gui" => "morpheus-gui"
 
     # Set PATH environment variable including Homebrew prefix in macOS app bundle
     inreplace "#{prefix}/Morpheus.app/Contents/Info.plist", "HOMEBREW_BIN_PATH", "#{HOMEBREW_PREFIX}/bin"
