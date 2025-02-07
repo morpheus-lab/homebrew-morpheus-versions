@@ -10,6 +10,7 @@ class MorpheusRelease < Formula
   depends_on "cmake" => :build
   depends_on "doxygen" => :build
   depends_on "ninja" => :build
+  depends_on "xsimd" => :build
   depends_on "gnuplot"
   depends_on "graphviz"
   depends_on "libomp"
