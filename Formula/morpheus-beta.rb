@@ -5,7 +5,7 @@ class MorpheusBeta < Formula
   version "3.0.0b1"
   sha256 "a533a2ee7a81193e103a8d609e9ed7ba6480135a7a1f5c8bf5424694fe6b0c7d"
   license "BSD-3-Clause"
-  revision 1
+  revision 2
 
   livecheck do
     url :stable
@@ -83,6 +83,7 @@ class MorpheusBeta < Formula
     if OS.mac?
       args << "-DMORPHEUS_RELEASE_BUNDLE=ON"
       args << "-DBREW_FORMULA_DEPLOYMENT=ON"
+      args << "-DMORPHEUS_QT_VERSION=Qt6"
 
       # SBML import currently disabled by default due to libSBML build errors with some macOS SDKs
       args << "-DMORPHEUS_SBML=OFF" if build.without? "sbml"
@@ -105,6 +106,13 @@ class MorpheusBeta < Formula
     inreplace "#{prefix}/Morpheus.app/Contents/Info.plist", "HOMEBREW_BIN_PATH", "#{HOMEBREW_PREFIX}/bin"
   end
 
+  def post_install
+    return unless OS.mac?
+
+    # Sign to ensure proper execution of the app bundle
+    system "/usr/bin/codesign", "-f", "-s", "-", "--deep", "#{prefix}/Morpheus.app"
+  end
+
   def caveats
     on_macos do
       <<~EOS
@@ -122,7 +130,7 @@ class MorpheusBeta < Formula
   end
 
   test do
-    (testpath/"test.xml").write <<~EOF
+    (testpath/"test.xml").write <<~XML
       <?xml version='1.0' encoding='UTF-8'?>
       <MorpheusModel version="4">
           <Description>
@@ -132,9 +140,9 @@ class MorpheusBeta < Formula
           <Space>
               <Lattice class="linear">
                   <Neighborhood>
-                      <Order>1</Order>
+                      <Order>optimal</Order>
                   </Neighborhood>
-                  <Size value="100,  0.0,  0.0" symbol="size"/>
+                  <Size symbol="size" value="1.0, 1.0, 0.0"/>
               </Lattice>
               <SpaceSymbol symbol="space"/>
           </Space>
@@ -144,10 +152,10 @@ class MorpheusBeta < Formula
               <TimeSymbol symbol="time"/>
           </Time>
           <Analysis>
-              <ModelGraph include-tags="#untagged" format="dot" reduced="false"/>
+              <ModelGraph format="dot" reduced="false" include-tags="#untagged"/>
           </Analysis>
       </MorpheusModel>
-    EOF
+    XML
 
     assert_match "Simulation finished", shell_output("#{bin}/morpheus --file test.xml")
   end
