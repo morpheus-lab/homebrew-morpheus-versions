@@ -90,7 +90,17 @@ class MorpheusBeta < Formula
 
       # Use Ginkgo and xtensor-blas from resources
       args << "-DGinkgo_DIR=#{buildpath}/ginkgo/lib/cmake/Ginkgo"
-      args << "-DCMAKE_CXX_FLAGS=-I#{buildpath}/xtensor-blas/include"
+
+      # Symlink all nested headers from Homebrew's xtensor/**/*.hpp structure into a flat xtensor/*.hpp directory required by the upstream code
+      local_xtensor_include = buildpath/"local_xtensor_include"
+      (local_xtensor_include/"xtensor").mkpath
+      xtensor_dir = "#{Formula["xtensor"].opt_include}/xtensor"
+      Dir.glob("#{xtensor_dir}/**/*.hpp").each do |header|
+        ln_s header, "#{local_xtensor_include}/xtensor/#{File.basename(header)}", force: true
+      end
+
+      # Use xtensor and xtensor-blas headers from own build directory and not from Cellar
+      args << "-DCMAKE_CXX_FLAGS=-I#{local_xtensor_include} -I#{buildpath}/xtensor-blas/include"
     end
 
     system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
@@ -122,7 +132,7 @@ class MorpheusBeta < Formula
 
         Or add Morpheus to your Applications folder with:
 
-          ln -sf #{opt_prefix}/Morpheus.app /Applications/Morpheus-Beta.app
+          ln -sf #{opt_prefix}/Morpheus.app /Applications/Morpheus-beta.app
 
         For more information about this release, visit: https://morpheus.gitlab.io/download/latest/
       EOS
