@@ -13,7 +13,7 @@ class MorpheusRelease < Formula
   depends_on "gnuplot"
   depends_on "graphviz"
   depends_on "libtiff"
-  depends_on "qt@5"
+  depends_on "qt@5.15.17"
   depends_on "ffmpeg" => :recommended # Runtime dependencies
 
   uses_from_macos "bzip2"
