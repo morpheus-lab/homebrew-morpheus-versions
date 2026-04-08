@@ -2,7 +2,7 @@ class MorpheusRelease < Formula
   desc "Modeling environment for multi-cellular systems biology"
   homepage "https://morpheus.gitlab.io/"
   license "BSD-3-Clause"
-  head "https://gitlab.com/morpheus.lab/morpheus.git", branch: "release_2.3"
+  head "https://gitlab.com/morpheus.lab/morpheus.git", branch: "release_2.4"
 
   option "with-sbml", "Enable SBML import via the internal libSBML build"
 
