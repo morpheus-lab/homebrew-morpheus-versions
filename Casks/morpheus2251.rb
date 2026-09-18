@@ -2,8 +2,7 @@ cask "morpheus2251" do
   version "2.2.5.1"
   sha256 "39823039b329e3edbcae263e0ecd3b3d30c6c0e0d2fc523946336b3d3ba8bdbf"
 
-  url "https://imc.zih.tu-dresden.de/morpheus/packages/mac/Morpheus-#{version}.dmg",
-      verified: "imc.zih.tu-dresden.de/morpheus/"
+  url "https://imc.zih.tu-dresden.de/morpheus/packages/mac/Morpheus-#{version}.dmg"
   name "Morpheus"
   desc "Modelling environment for multi-cellular systems biology"
   homepage "https://morpheus.gitlab.io/"
