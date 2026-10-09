@@ -2,7 +2,7 @@ class MorpheusRelease < Formula
   desc "Modeling environment for multi-cellular systems biology"
   homepage "https://morpheus.gitlab.io/"
   license "BSD-3-Clause"
-  head "https://gitlab.com/morpheus.lab/morpheus.git", branch: "release_2.4"
+  head "https://gitlab.com/morpheus.lab/morpheus.git", branch: "release_2.4.2"
 
   option "with-sbml", "Enable SBML import via the internal libSBML build"
 
@@ -10,10 +10,12 @@ class MorpheusRelease < Formula
   depends_on "cmake" => :build
   depends_on "doxygen" => :build
   depends_on "ninja" => :build
+  depends_on "ginkgo"
   depends_on "gnuplot"
   depends_on "graphviz"
+  depends_on "hdf5"
   depends_on "libtiff"
-  depends_on "qt@5.15.17"
+  depends_on "qt"
   depends_on "ffmpeg" => :recommended # Runtime dependencies
 
   uses_from_macos "bzip2"
@@ -24,9 +26,10 @@ class MorpheusRelease < Formula
     depends_on "libomp"
   end
 
+  # Needs patched xtensor version until https://github.com/xtensor-stack/xtensor/issues/2892 is fixed
   resource "xtensor" do
-    url "https://github.com/xtensor-stack/xtensor/archive/refs/tags/0.27.0.tar.gz"
-    sha256 "9ca1743048492edfcc841bbe01f58520ff9c595ec587c0e7dc2fc39deeef3e04"
+    url "https://github.com/xtensor-stack/xtensor/archive/refs/tags/0.27.1.tar.gz"
+    sha256 "117c192ae3b7c37c0156dedaa88038e0599a6b264666c3c6c2553154b500fe23"
   end
 
   resource "xsimd" do
@@ -39,12 +42,22 @@ class MorpheusRelease < Formula
     sha256 "ee38153b7dd0ec84cee3361f5488a4e7e6ddd26392612ac8821cbc76e740273a"
   end
 
+  resource "xtensor-blas" do
+    url "https://github.com/xtensor-stack/xtensor-blas/archive/refs/tags/0.23.0.tar.gz"
+    sha256 "3411f56d243b92a22fe3a259bc8b414d851ab167b9d30700a1776c9908e0b595"
+  end
+
+  resource "highfive" do
+    url "https://github.com/highfive-devs/highfive/archive/refs/tags/v3.3.0.tar.gz"
+    sha256 "325cfbcf0c0296a6dd26f3b088801b7ebb8d6f109c0565c11d2d8c4af3253bff"
+  end
+
   def install
     resource("xtl").stage do
       mkdir "build" do
         system "cmake", "-S", "..", "-B", ".",
                "-DBUILD_TESTS=OFF",
-               *std_cmake_args(install_prefix: buildpath.to_s)
+               *std_cmake_args(install_prefix: buildpath)
         system "cmake", "--build", "."
         system "cmake", "--install", "."
       end
@@ -54,19 +67,42 @@ class MorpheusRelease < Formula
       mkdir "build" do
         system "cmake", "-S", "..", "-B", ".",
                "-DBUILD_TESTS=OFF",
-               *std_cmake_args(install_prefix: buildpath.to_s)
+               *std_cmake_args(install_prefix: buildpath)
         system "cmake", "--build", "."
         system "cmake", "--install", "."
       end
     end
 
+    # Needs patched xtensor version until https://github.com/xtensor-stack/xtensor/issues/2892 is fixed
     resource("xtensor").stage do
+      system "git", "apply", buildpath/"3rdparty/xtensor/xassign.patch"
       mkdir "build" do
         system "cmake", "-S", "..", "-B", ".",
                "-DXTENSOR_USE_OPENMP=ON",
                "-DXTENSOR_USE_SIMD=ON",
                "-DBUILD_TESTS=OFF",
-               *std_cmake_args(install_prefix: buildpath.to_s)
+               *std_cmake_args(install_prefix: buildpath)
+        system "cmake", "--build", "."
+        system "cmake", "--install", "."
+      end
+    end
+
+    resource("xtensor-blas").stage do
+      mkdir "build" do
+        system "cmake", "-S", "..", "-B", ".",
+               "-DBUILD_TESTS=OFF",
+               *std_cmake_args(install_prefix: buildpath)
+        system "cmake", "--build", "."
+        system "cmake", "--install", "."
+      end
+    end
+
+    resource("highfive").stage do
+      mkdir "build" do
+        system "cmake", "-S", "..", "-B", ".",
+               "-DBUILD_TESTS=OFF",
+               "-DHIGHFIVE_UNIT_TESTS=OFF",
+               *std_cmake_args(install_prefix: buildpath)
         system "cmake", "--build", "."
         system "cmake", "--install", "."
       end
@@ -87,7 +123,7 @@ class MorpheusRelease < Formula
       "-G",
       "Ninja", # has to build with Ninja until: https://gitlab.kitware.com/cmake/cmake/-/issues/25142
       "-DMORPHEUS_BINARY_SUFFIX=#{binary_suffix}",
-      "-DCMAKE_PREFIX_PATH=#{buildpath}/resources",
+      "-DCMAKE_PREFIX_PATH=#{buildpath}",
     ]
 
     if OS.mac?
