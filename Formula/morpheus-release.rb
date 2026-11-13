@@ -52,6 +52,11 @@ class MorpheusRelease < Formula
     sha256 "325cfbcf0c0296a6dd26f3b088801b7ebb8d6f109c0565c11d2d8c4af3253bff"
   end
 
+  resource "libsbml" do
+    url "https://github.com/sbmlteam/libsbml/archive/refs/tags/v5.20.2.tar.gz"
+    sha256 "a196cab964b0b41164d4118ef20523696510bbfd264a029df00091305a1af540"
+  end
+
   def install
     resource("xtl").stage do
       mkdir "build" do
@@ -102,6 +107,24 @@ class MorpheusRelease < Formula
         system "cmake", "-S", "..", "-B", ".",
                "-DBUILD_TESTS=OFF",
                "-DHIGHFIVE_UNIT_TESTS=OFF",
+               *std_cmake_args(install_prefix: buildpath)
+        system "cmake", "--build", "."
+        system "cmake", "--install", "."
+      end
+    end
+
+    resource("libsbml").stage do
+      mkdir "build" do
+        system "cmake", "-S", "..", "-B", ".",
+               "-DLIBSBML_SKIP_SHARED_LIBRARY=ON",
+               "-DWITH_CPP_NAMESPACE=OFF",
+               "-DWITH_JAVA=OFF",
+               "-DWITH_PYTHON=OFF",
+               "-DWITH_SWIG=OFF",
+               "-DWITH_LIBXML=ON",
+               "-DWITH_BZIP2=OFF",
+               "-DENABLE_COMP=ON",
+               "-DENABLE_DISTRIB=ON",
                *std_cmake_args(install_prefix: buildpath)
         system "cmake", "--build", "."
         system "cmake", "--install", "."
